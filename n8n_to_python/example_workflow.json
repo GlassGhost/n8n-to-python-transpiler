@@ -33,6 +33,18 @@
         "webhookUrl": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL",
         "message": "Hello, Alice!"
       }
+    },
+    {
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        120,
+        500
+      ],
+      "parameters": {
+        "note": "This is a test comment."
+      }
     }
   ]
 }

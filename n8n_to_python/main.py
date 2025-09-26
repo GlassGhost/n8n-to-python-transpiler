@@ -1,12 +1,7 @@
 import json
-from api_nodes import handle_http_request, handle_webhook
-from data_nodes import handle_set, handle_if, handle_merge
-from db_nodes import handle_mysql, handle_postgresql, handle_mongodb
-from control_nodes import handle_cron, handle_delay
-from auth_nodes import handle_oauth2
-from ai_nodes import handle_openai
-from file_nodes import handle_read_file, handle_write_file
-from integration_nodes import handle_slack, handle_telegram
+import py_compile
+import sys
+import black
 from utils import node_dispatcher
 
 
@@ -28,8 +23,22 @@ def transpile_workflow(n8n_json):
 
 
 if __name__ == "__main__":
-    workflow = load_n8n_workflow("example_workflow.json")
+    output_filename = "generated_workflow.py"
+    workflow = load_n8n_workflow("n8n_to_python/example_workflow.json")
     python_code = transpile_workflow(workflow)
-    with open("generated_workflow.py", "w") as f:
+
+    try:
+        python_code = black.format_str(python_code, mode=black.FileMode())
+    except black.NothingChanged:
+        pass
+
+    with open(output_filename, "w") as f:
         f.write(python_code)
-    print("✅ Python workflow generated as generated_workflow.py")
+
+    try:
+        py_compile.compile(output_filename, doraise=True)
+        print(f"✅ Python workflow generated, formatted, and validated as {output_filename}")
+    except py_compile.PyCompileError as e:
+        print(f"❌ Error: Generated Python code in {output_filename} is invalid.", file=sys.stderr)
+        print(e, file=sys.stderr)
+        sys.exit(1)

@@ -24,3 +24,11 @@ def handle_merge(node):
         "# Simulated merge operation\n"
         f"print('Merging inputs with mode: {mode}')"
     )
+
+def handle_comment(node):
+    """
+    Generates a Python comment from an n8n sticky note.
+    """
+    note_text = node.get("parameters", {}).get("note", "")
+    comment_lines = [f"# {line}" for line in note_text.split('\n')]
+    return "\n".join(comment_lines)

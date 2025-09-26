@@ -1,6 +1,6 @@
 # utils.py
 
-from data_nodes import handle_set, handle_if, handle_merge
+from data_nodes import handle_set, handle_if, handle_merge, handle_comment
 from db_nodes import handle_mysql, handle_postgresql, handle_mongodb
 from control_nodes import handle_cron, handle_delay
 from auth_nodes import handle_http_basic_auth, handle_oauth2
@@ -13,6 +13,7 @@ node_dispatcher = {
     "Set": handle_set,
     "If": handle_if,
     "Merge": handle_merge,
+    "n8n-nodes-base.stickyNote": handle_comment,
     "MySQL": handle_mysql,
     "PostgreSQL": handle_postgresql,
     "MongoDB": handle_mongodb,

@@ -2,6 +2,9 @@
 
 import argparse
 import json
+import py_compile
+import sys
+import black
 from utils import node_dispatcher
 
 
@@ -18,10 +21,23 @@ def transpile_workflow(json_path, output_path="generated_workflow.py"):
         else:
             generated_code.append(f"# {node['name']}\n# Unsupported node type: {node_type}")
 
-    with open(output_path, "w") as f:
-        f.write("\n\n".join(generated_code))
+    code_string = "\n\n".join(generated_code)
 
-    print(f"✅ Workflow transpiled to {output_path}")
+    try:
+        code_string = black.format_str(code_string, mode=black.FileMode())
+    except black.NothingChanged:
+        pass
+
+    with open(output_path, "w") as f:
+        f.write(code_string)
+
+    try:
+        py_compile.compile(output_path, doraise=True)
+        print(f"✅ Workflow transpiled, formatted, and validated to {output_path}")
+    except py_compile.PyCompileError as e:
+        print(f"❌ Error: Generated Python code in {output_path} is invalid.", file=sys.stderr)
+        print(e, file=sys.stderr)
+        sys.exit(1)
 
 
 def main():
