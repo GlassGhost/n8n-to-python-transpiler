@@ -2,7 +2,9 @@ import json
 import py_compile
 import sys
 import black
-from utils import node_dispatcher
+from cli_runner import build_node_dispatcher
+
+node_dispatcher = build_node_dispatcher()
 
 
 def load_n8n_workflow(path):

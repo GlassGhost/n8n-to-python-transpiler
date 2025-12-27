@@ -5,10 +5,35 @@ import json
 import py_compile
 import sys
 import black
-from utils import node_dispatcher
+import inspect
+import pkgutil
+import importlib
+import nodes as nds
+
+
+def build_node_dispatcher():
+    dispatcher = {}
+
+    # Walk all submodules inside the nodes package
+    for module_info in pkgutil.walk_packages(nds.__path__, nds.__name__ + "."):
+        module = importlib.import_module(module_info.name)
+
+        # Collect all functions named handle_*
+        for name, func in inspect.getmembers(module, inspect.isfunction):
+            if name.startswith("handle_"):
+                key = (
+                    name.replace("handle_", "")
+                    .replace("_", " ")
+                    .title()
+                )
+                dispatcher[key] = func
+
+    return dispatcher
 
 
 def transpile_workflow(json_path, output_path="generated_workflow.py"):
+    node_dispatcher = build_node_dispatcher()
+
     with open(json_path) as f:
         workflow = json.load(f)
 
