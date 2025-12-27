@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+# rlc stuff
+concat.md
+concat_macro.sh
+
 # Distribution / packaging
 .Python
 build/
